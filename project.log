@@ -1,0 +1,74 @@
+2026-05-27 22:18:20 | DEBUG | P03 | No variables found in .env
+2026-05-27 22:18:20 | INFO | P03 | === RUN START ===
+2026-05-27 22:18:20 | INFO | P03 | project=P03
+2026-05-27 22:18:20 | INFO | P03 | repo_dir=streaming-03-analytics
+2026-05-27 22:18:20 | INFO | P03 | python=3.14.3
+2026-05-27 22:18:20 | INFO | P03 | os=Windows 10
+2026-05-27 22:18:20 | INFO | P03 | shell=powershell
+2026-05-27 22:18:20 | INFO | P03 | cwd=.
+2026-05-27 22:18:20 | INFO | P03 | github_actions=False
+2026-05-27 22:18:20 | INFO | P03 | ========================
+2026-05-27 22:18:20 | INFO | P03 | START producer main()
+2026-05-27 22:18:20 | INFO | P03 | ========================
+2026-05-27 22:18:20 | INFO | P03 | ROOT_DIR = .
+2026-05-27 22:18:20 | INFO | P03 | DATA_DIR = data
+2026-05-27 22:18:20 | INFO | P03 | SALES_CSV = data\sales.csv
+2026-05-27 22:18:20 | INFO | P03 | REGIONS_CSV = data\regions.csv
+2026-05-27 22:18:20 | INFO | P03 | PRODUCTS_CSV = data\products.csv
+2026-05-27 22:18:20 | INFO | P03 | REJECTED_SALES_CSV = data\output\producer_rejected_sales.csv
+2026-05-27 22:18:20 | INFO | P03 | ========================
+2026-05-27 22:18:20 | INFO | P03 | SECTION A. Acquire
+2026-05-27 22:18:20 | INFO | P03 | ========================
+2026-05-27 22:18:20 | INFO | P03 | Loading settings from .env...
+2026-05-27 22:18:20 | INFO | P03 | KAFKA_BOOTSTRAP_SERVERS           = localhost:9092
+2026-05-27 22:18:20 | INFO | P03 | KAFKA_TOPIC                       = product-sales-case
+2026-05-27 22:18:20 | INFO | P03 | PRODUCER_MESSAGE_COUNT            = 6
+2026-05-27 22:18:20 | INFO | P03 | PRODUCER_MESSAGE_INTERVAL_SECONDS = 2.0
+2026-05-27 22:18:20 | INFO | P03 | KAFKA_CLEAR_TOPIC_ON_START        = False
+2026-05-27 22:18:20 | INFO | P03 | Verifying Kafka connection...
+2026-05-27 22:18:20 | INFO | P03 | Kafka port is reachable.
+2026-05-27 22:18:24 | INFO | P03 | Loading validation reference data...
+2026-05-27 22:18:24 | INFO | P03 | Found 6 valid regions, 
+2026-05-27 22:18:24 | INFO | P03 | 6 valid products.
+2026-05-27 22:18:24 | INFO | P03 | ========================
+2026-05-27 22:18:24 | INFO | P03 | SECTION P. Produce Messages
+2026-05-27 22:18:24 | INFO | P03 | ========================
+2026-05-27 22:18:24 | INFO | P03 | Initializing output...
+2026-05-27 22:18:24 | INFO | P03 | Output directory ready: output
+2026-05-27 22:18:24 | INFO | P03 | Sending messages...
+2026-05-27 22:18:24 | INFO | P03 | Sending up to 6 message(s) to topic 'product-sales-case'.
+2026-05-27 22:18:24 | INFO | P03 | Watch each sale arrive. Press CTRL+C to stop early.
+
+2026-05-27 22:18:24 | INFO | P03 | {
+  order_id: e7324981-a9f0-419f-b708-d0a333451fff
+  datetime: 2026-05-04T08:11:00Z
+  region_id: US-TX
+  currency_code: USD
+  product_id: PY-STREAM-005
+  unit_price: 59.99
+  quantity: 3
+  is_online: true
+  customer_id: CUST-4150
+  is_new_customer: false
+  device_type: tablet
+  payment_method: paypal
+  referral_source: paid_search
+  discount_code: 
+  customer_note: Gift for my team
+}
+2026-05-27 22:18:24 | INFO | P03 |   Sending message with key=US-TX
+2026-05-27 22:18:30 | ERROR | P03 | !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+The message was generated, but Kafka did not accept it.
+Kafka did not confirm message delivery.
+Details:
+    KafkaError{code=_MSG_TIMED_OUT,val=-192,str="Local: Message timed out"}
+
+CHECK:
+1. Confirm Kafka is running.
+2. Confirm the topic exists.
+3. Confirm the broker is reachable at localhost:9092.
+4. Try MANAGE_TOPIC.md to verify Kafka independently of Python.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+2026-05-27 22:18:30 | ERROR | P03 | Producer stopped before completing all messages.
+2026-05-27 22:18:41 | DEBUG | C03 | No variables found in .env
+2026-05-27 22:18:41 | DEBUG | P03 | No variables found in .env
