@@ -48,7 +48,7 @@ Uses the project Kafka topic defined in settings
 Messages are sent with the original record fields, without altering the source
 fields
 
-## Consumer Validation
+### Consumer Validation
 
 Consumer checks required fields and looks up reference values
 Accepted messages are enriched and written to the output CSV
@@ -56,7 +56,7 @@ Rejected or invalid messages are skipped and logged
 Validation protects analytics results by keeping only complete, referenced
 records
 
-## Data Engineering and Enrichment
+### Data Engineering and Enrichment
 
 Added derived fields:
 subtotal
@@ -68,7 +68,7 @@ Uses reference data from regions.csv and discount_codes.csv
 Raw fields are transformed into financial amounts and discount-aware totals
 Changed calculation so tax is computed after discount is applied
 
-## Streaming Analytics
+### Streaming Analytics
 
 Tracks running summaries as messages arrive
 Summarized values:
