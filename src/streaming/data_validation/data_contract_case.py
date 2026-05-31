@@ -132,6 +132,8 @@ ALLOWED_CURRENCY_CODES: Final[set[str]] = {"USD", "CAD", "MXN"}
 CONSUMED_FIELDNAMES: Final[list[str]] = [
     *SALES_REQUIRED_FIELDS,
     "subtotal",
+    "discount_amount",
+    "price_after_discount",
     "tax_amount",
     "total",
     "_kafka_key",

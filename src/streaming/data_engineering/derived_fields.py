@@ -36,9 +36,11 @@ from typing import Any, Final
 
 __all__ = [
     "TAX_RATE_DEFAULT",
+    "compute_discount_amount",
     "compute_tax_amount",
     "compute_total_price",
     "enrich_message",
+    "get_discount_rate",
     "get_tax_rate",
 ]
 
@@ -67,6 +69,19 @@ def compute_total_price(quantity: int, unit_price: float) -> float:
     return round(quantity * unit_price, 2)
 
 
+def compute_discount_amount(total_price: float, discount_rate: float) -> float:
+    """Compute the discount amount for an order.
+
+    Arguments:
+        total_price: Total price before discount.
+        discount_rate: Discount rate as a decimal (e.g. 0.10 for 10%).
+
+    Returns:
+        Discount amount rounded to 2 decimal places.
+    """
+    return round(total_price * discount_rate, 2)
+
+
 def compute_tax_amount(total_price: float, tax_rate: float) -> float:
     """Compute the tax amount for an order.
 
@@ -83,11 +98,12 @@ def compute_tax_amount(total_price: float, tax_rate: float) -> float:
 def enrich_message(
     row: dict[str, Any],
     region_lookup: dict[str, float],
+    discount_lookup: dict[str, float],
 ) -> dict[str, Any]:
     """Add all derived fields to a raw message row.
 
-    Computes total_price and tax_amount from the raw message fields
-    and the region lookup table.
+    Computes total_price, discount_amount, and tax_amount from the raw message fields
+    and the region and discount lookup tables.
 
     As you add more derived fields,
     extend this function to provide them as well.
@@ -95,6 +111,7 @@ def enrich_message(
     Arguments:
         row: A validated raw message row.
         region_lookup: A dict mapping region_id to tax_rate_pct.
+        discount_lookup: A dict mapping discount_code to discount_pct.
 
     Returns:
         A new dict containing all original fields plus derived fields.
@@ -102,18 +119,44 @@ def enrich_message(
     quantity = int(row.get("quantity", 0))
     unit_price = float(row.get("unit_price", 0.0))
     region_id = str(row.get("region_id", ""))
+    discount_code = str(row.get("discount_code", ""))
 
     tax_rate = get_tax_rate(region_id, region_lookup)
     total_price = compute_total_price(quantity, unit_price)
-    tax_amount = compute_tax_amount(total_price, tax_rate)
+    discount_rate = get_discount_rate(discount_code, discount_lookup)
+    discount_amount = compute_discount_amount(total_price, discount_rate)
 
-    total = round(total_price + tax_amount, 2)
+    price_after_discount = round(total_price - discount_amount, 2)
+    tax_amount = compute_tax_amount(price_after_discount, tax_rate)
+
+    total = round(price_after_discount + tax_amount, 2)
     return {
         **row,
         "subtotal": total_price,
+        "discount_amount": discount_amount,
+        "price_after_discount": price_after_discount,
         "tax_amount": tax_amount,
         "total": total,
     }
+
+
+def get_discount_rate(discount_code: str, discount_lookup: dict[str, float]) -> float:
+    """Look up the discount rate for a code.
+
+    The discount rate is stored as a percentage in discount_codes.csv (e.g. 10.0 for 10%).
+    This function converts it to a decimal for use in calculations.
+
+    Arguments:
+        discount_code: The discount code from the message (e.g. "WELCOME10").
+        discount_lookup: A dict mapping discount_code to discount_pct (as a float).
+
+    Returns:
+        The discount rate as a decimal (e.g. 0.10 for 10%), or 0.0 if code not found.
+    """
+    if not discount_code or discount_code not in discount_lookup:
+        return 0.0
+
+    return discount_lookup[discount_code] / 100.0
 
 
 def get_tax_rate(region_id: str, region_lookup: dict[str, float]) -> float:
